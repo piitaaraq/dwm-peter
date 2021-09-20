@@ -2,52 +2,25 @@
 #include <X11/XF86keysym.h>
 
 /* appearance */
-static const unsigned int borderpx  = 0;        /* border pixel of windows */
+static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
-static const unsigned int systrayspacing = 2;   /* systray spacing */
-static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
-static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int barPadding         = 6;
-static const int usealtbar          = 1;        /* 1 means use non-dwm status bar */
-static const char *altbarclass      = "Polybar"; /* Alternate bar class name */
-static const char *altbarcmd        = "~/.config/polybar/bar.sh";  /* Alternate bar launch command */
-static const char *fonts[]          = {
-	"Iosevka,Iosevka Nerd Font:size=11"
-};
-static const char dmenu_hp[]        =  "st zsh,google-chrome-stable,firefox,alacritty -e zsh,thunar,poweroff,reboot";
-static const char dmenufont[]       = "Iosevka,Iosevka Nerd Font:size=11";
-static const char dracula0[] 	= "#282a36";	/*background*/	
-static const char dracula1[] 	= "#44475a";      /*Current Line*/	
-static const char dracula2[] 	= "#f8f8f2";	/*Foreground*/		
-static const char dracula3[] 	= "#6272a4";	/*Comment*/		
-static const char dracula4[] 	= "#8be9fd";	/*Cyan*/	
-static const char dracula5[] 	= "#50fa7b";	/*Green*/	
-static const char dracula6[] 	= "#ffb86c";	/*Orange*/		
-static const char dracula7[] 	= "#ff79c6";	/*Pink*/	
-static const char dracula8[] 	= "#bd93f9";	/*Purple*/		
-static const char dracula9[] 	= "#ff5555";	/*Red*/	
-static const char dracula10[]	= "#f1fa8c";	/*Yellow*/
-	
+static const char *fonts[]          = { "Input Mono Condensed:size=10" };
+static const char dmenufont[]       = "Input Mono Condensed:size=10";
+static const char col_gray1[]       = "#222222";
+static const char col_gray2[]       = "#444444";
+static const char col_gray3[]       = "#bbbbbb";
+static const char col_gray4[]       = "#eeeeee";
+static const char col_cyan[]        = "#005577";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeNorm] = { dracula2,  dracula0,  dracula0 },
-	[SchemeSel]  = { dracula0,  dracula8,  dracula8  },
+	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
+	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
 /* tagging */
-static const char *tags[] = { 
-    "1", 
-    "2", 
-    "3", 
-    "4", 
-    "5", 
-    "6", 
-    "7", 
-    "8", 
-    "9" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -71,31 +44,6 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 };
 
-/* lock button */
-static const char *lockcmd[]        = {
-    "locker",
-    NULL};
-
-/* Sound control */
-static const char *volMute[] = {
-    "pactl",
-    "set-sink-mute",
-    "0",
-    "toggle",
-    NULL};
-static const char *volUp[] = {
-    "pactl",
-    "set-sink-volume",
-    "0",
-    "+5%",
-    NULL};
-static const char *volDown[] = {
-    "pactl",
-    "set-sink-volume",
-    "0",
-    "-5%",
-    NULL};
-
 /* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
@@ -109,42 +57,26 @@ static const char *volDown[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { 
-    "dmenu_run", 
-    "-m", dmenumon, 
-    "-fn", dmenufont,
-    "-nb", dracula0, 
-    "-nf", dracula2, 
-    "-sb", dracula8, 
-    "-sf", dracula1, 
-    "-hp", dmenu_hp,
-    NULL };
-static const char *termcmd[]  = { 
-    "kitty", 
-    NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *termcmd[]  = { "alacritty", "-e", "zsh", NULL };
+/* volume controls */
+/* static const char *voldown[] = { "amixer" "set" "Master" "5%-", NULL };*/
+/* static const char *volup[] = { "amixer" "set" "Master" "5%+", NULL };*/
+/* static const char *mute[] = { "amixer" "set" "Master" "toggle", NULL };*/
 
 /* Screen brightness */
-static const char *brighter[] = {
-    "xbacklight", 
-    "-inc", 
-    "5", 
-    NULL};
-static const char *darker[] = {
-    "xbacklight", 
-    "-dec", 
-    "5", 
-    NULL};
+static const char *brighter[] = {"xbacklight", "-inc", "5", NULL};
+static const char *darker[] = {"xbacklight", "-dec", "5", NULL};
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p, spawn,          {.v = dmenucmd } },
-	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	/*{ 0,                            XF86XK_AudioLowerVolume,    spawn,          {.v = voldown } },*/
+	/*{ 0,                            XF86XK_AudioRaiseVolume,    spawn,          {.v = volup } },*/
+	/*{ 0,                            XF86XK_AudioMute,    spawn,          {.v = mute } },*/
         {0, XF86XK_MonBrightnessDown, spawn, {.v = darker }},
         {0, XF86XK_MonBrightnessUp, spawn, {.v = brighter }},
-        {0, XF86XK_AudioMute, spawn, {.v = volMute }},
-        {0, XF86XK_AudioRaiseVolume, spawn, {.v = volUp }},
-        {0, XF86XK_AudioLowerVolume, spawn, {.v = volDown }},
-        {0, XF86XK_Launch1, spawn, {.v = lockcmd }}, 
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -152,7 +84,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ControlMask,           XK_Return, zoom,           {0} },
+	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
@@ -175,7 +107,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ Mod1Mask|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
 /* button definitions */
@@ -193,23 +125,5 @@ static Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
-};
-
-static const char *ipcsockpath = "/tmp/dwm.sock";
-static IPCCommand ipccommands[] = {
-  IPCCOMMAND(  view,                1,      {ARG_TYPE_UINT}   ),
-  IPCCOMMAND(  toggleview,          1,      {ARG_TYPE_UINT}   ),
-  IPCCOMMAND(  tag,                 1,      {ARG_TYPE_UINT}   ),
-  IPCCOMMAND(  toggletag,           1,      {ARG_TYPE_UINT}   ),
-  IPCCOMMAND(  tagmon,              1,      {ARG_TYPE_UINT}   ),
-  IPCCOMMAND(  focusmon,            1,      {ARG_TYPE_SINT}   ),
-  IPCCOMMAND(  focusstack,          1,      {ARG_TYPE_SINT}   ),
-  IPCCOMMAND(  zoom,                1,      {ARG_TYPE_NONE}   ),
-  IPCCOMMAND(  incnmaster,          1,      {ARG_TYPE_SINT}   ),
-  IPCCOMMAND(  killclient,          1,      {ARG_TYPE_SINT}   ),
-  IPCCOMMAND(  togglefloating,      1,      {ARG_TYPE_NONE}   ),
-  IPCCOMMAND(  setmfact,            1,      {ARG_TYPE_FLOAT}  ),
-  IPCCOMMAND(  setlayoutsafe,       1,      {ARG_TYPE_PTR}    ),
-  IPCCOMMAND(  quit,                1,      {ARG_TYPE_NONE}   )
 };
 
